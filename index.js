@@ -4,6 +4,7 @@ const app = express();
 const cors = require("cors");
 const connection = require("./db");
 const { Transaction } = require("./models/Transaction");
+const { Charge } = require("./models/Charge");
 const userRoutes = require("./routes/Users");
 const authUserRoutes = require("./routes/authUser");
 const { User } = require("./models/user");
@@ -128,6 +129,31 @@ app.post("/transactions/email", async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
     }
   });
+
+  // API endpoint for charges
+app.post('/charge', async (req, res) => {
+    try {
+        await Charge.create(req.body);
+        res.status(200).json({message: "Charges added"});
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.get('/charges', async (req, res) => {
+    try {
+        const charges = await Charge.find({});
+
+        // Sort transactions by timestamp in ascending order (earliest first)
+        charges.reverse();
+
+        res.status(200).json(charges);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
 
 //app.listen();
 
