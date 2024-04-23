@@ -55,6 +55,28 @@ app.post("/users/email", async (req, res) => {
   }
 });
 
+// API Endpoint to update meter number
+app.put('/updatemeter', async (req, res) => {
+  try {
+      
+      // Find user by email
+      const { email, meternumber } = req.body;
+      const user = await User.findOne({ email });
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Update meter number
+      user.meternumber = meternumber;
+      await user.save();
+
+      res.status(200).json({ message: 'Meter number updated successfully' });
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 app.post('/transaction', async (req, res) => {
     try {
         await Transaction.create(req.body);
@@ -68,6 +90,10 @@ app.post('/transaction', async (req, res) => {
 app.get('/transactions', async (req, res) => {
     try {
         const transactions = await Transaction.find({});
+
+        // Sort transactions by timestamp in ascending order (earliest first)
+        transactions.sort((a, b) => a.timestamp - b.timestamp);
+
         res.status(200).json(transactions);
     } catch (error) {
         console.error(error.message);
@@ -92,6 +118,9 @@ app.post("/transactions/email", async (req, res) => {
       if (transactions.length === 0) {
         return res.status(404).json({ message: "No transactions found for the provided email" });
       }
+
+       // Sort transactions by timestamp in ascending order (earliest first)
+       transactions.sort((a, b) => a.timestamp - b.timestamp);
   
       res.status(200).json(transactions);
     } catch (error) {
