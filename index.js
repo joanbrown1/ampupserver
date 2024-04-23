@@ -92,7 +92,7 @@ app.get('/transactions', async (req, res) => {
         const transactions = await Transaction.find({});
 
         // Sort transactions by timestamp in ascending order (earliest first)
-        transactions.sort((a, b) => b.timestamp - a.timestamp);
+        transactions.reverse();
 
         res.status(200).json(transactions);
     } catch (error) {
@@ -120,7 +120,7 @@ app.post("/transactions/email", async (req, res) => {
       }
 
        // Sort transactions by timestamp in ascending order (earliest first)
-       transactions.sort((a, b) => b.timestamp - a.timestamp);
+       transactions.reverse();
   
       res.status(200).json(transactions);
     } catch (error) {
