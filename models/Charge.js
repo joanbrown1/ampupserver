@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const chargeSchema = new mongoose.Schema({
     charge: {
-        type: String,
+        type: Number,
         required: true
     },
     date: {
