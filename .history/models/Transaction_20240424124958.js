@@ -37,11 +37,7 @@ const transactionSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    discountpercent: {
-        type: String,
-        required: true
-    },
-    discountcharge: {
+    discount: {
         type: String,
         required: true
     },
