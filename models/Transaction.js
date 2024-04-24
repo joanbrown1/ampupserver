@@ -5,6 +5,10 @@ const transactionSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    phone: {
+        type: String,
+        required: true
+    },
     meternumber: {
         type: String,
         required: true
@@ -18,6 +22,30 @@ const transactionSchema = new mongoose.Schema({
         required: true
     },
     amount: {
+        type: String,
+        required: true
+    },
+    vtpassid: {
+        type: String,
+        required: true
+    },
+    ppid: {
+        type: String,
+        required: true
+    },
+    units: {
+        type: String,
+        required: true
+    },
+    discount: {
+        type: String,
+        required: true
+    },
+    commision: {
+        type: String,
+        required: true
+    },
+    charge: {
         type: String,
         required: true
     },

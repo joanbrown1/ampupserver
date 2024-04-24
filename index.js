@@ -5,8 +5,10 @@ const cors = require("cors");
 const connection = require("./db");
 const { Transaction } = require("./models/Transaction");
 const { Charge } = require("./models/Charge");
+const { Discount } = require("./models/Discount");
 const userRoutes = require("./routes/Users");
 const authUserRoutes = require("./routes/authUser");
+const updateUserRoutes = require("./routes/updateUser");
 const { User } = require("./models/user");
 
 app.use(express.json());
@@ -22,6 +24,7 @@ app.use(cors()); // Enable CORS for all origins
 // routes
 app.use("/api/users", userRoutes);
 app.use("/api/authUser", authUserRoutes);
+app.use("/update/user", updateUserRoutes);
 app.get('/users', async(req, res) => {
     try {
         const users = await User.find({});
@@ -145,7 +148,7 @@ app.get('/charges', async (req, res) => {
     try {
         const charges = await Charge.find({});
 
-        // Sort transactions by timestamp in ascending order (earliest first)
+        // Sort charges by timestamp in ascending order (earliest first)
         charges.reverse();
 
         res.status(200).json(charges);
@@ -153,6 +156,60 @@ app.get('/charges', async (req, res) => {
         console.error(error.message);
         res.status(500).json({ message: error.message });
     }
+});
+
+//API for Discount
+
+app.post('/discount', async (req, res) => {
+  try {
+      await Discount.create(req.body);
+      res.status(200).json({message: "Discount created"});
+  } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+  }
+});
+
+app.get('/discounts', async (req, res) => {
+  try {
+      const discounts = await Discount.find({});
+
+      // Sort discounts by timestamp in ascending order (earliest first)
+      discounts.reverse();
+
+      res.status(200).json(discounts);
+  } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+  }
+});
+
+// API endpoint to search for discounts by code
+app.post("/discounts/code", async (req, res) => {
+  try {
+    const searchcode = req.body.code;
+    if (!searchcode) {
+      return res.status(400).json({ message: "code parameter is missing" });
+    }
+
+    // Use a regular expression to perform a case-insensitive search for similar categories
+    const regex = new RegExp(searchcode, "i");
+
+    // Search for discounts directly in the database
+    const discounts = await Discount.find({ code: regex }).exec();
+
+    if (discounts.length === 0) {
+      return res.status(404).json({ message: "No discounts found for the provided code" });
+    }
+
+     // Sort transactions by timestamp in ascending order (earliest first)
+     discounts.reverse();
+
+    res.status(200).json(discounts);
+  } catch (error) {
+    console.error("Error searching for discounts:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 //app.listen();
