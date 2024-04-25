@@ -13,19 +13,27 @@ const transactionSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    location: {
+    amount: {
+        type: Number,
+        required: true
+    },
+    units: {
         type: String,
+        required: true
+    },
+    charge: {
+        type: Number,
         required: true
     },
     token: {
         type: String,
         required: true
     },
-    amount: {
+    location: {
         type: String,
         required: true
     },
-    vtpassid: {
+    vtid: {
         type: String,
         required: true
     },
@@ -33,24 +41,28 @@ const transactionSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    units: {
-        type: String,
+    cost: {
+        type: Number,
         required: true
     },
-    discountpercent: {
-        type: String,
-        required: true
-    },
-    discountcharge: {
-        type: String,
+    tpl: {
+        type: Number,
         required: true
     },
     commision: {
-        type: String,
+        type: Number,
         required: true
     },
-    charge: {
-        type: String,
+    discountpercent: {
+        type: Number,
+        required: true
+    },
+    discountamount: {
+        type: Number,
+        required: true
+    },
+    tpm: {
+        type: Number,
         required: true
     },
     date: {
