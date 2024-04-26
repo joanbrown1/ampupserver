@@ -12,6 +12,7 @@ const authUserRoutes = require("./routes/authUser");
 const updateUserRoutes = require("./routes/updateUser");
 const updateAdminRoutes = require("./routes/updateAdmin");
 const { User } = require("./models/user");
+const exceljs = require('exceljs');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -80,6 +81,47 @@ app.put('/updatemeter', async (req, res) => {
   } catch (err) {
       console.error(err);
       res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// New API endpoint to download user data in Excel format
+app.get('/download/users', async (req, res) => {
+  try {
+      const users = await User.find({});
+
+      // Create a new workbook
+      const workbook = new exceljs.Workbook();
+      const worksheet = workbook.addWorksheet('Users');
+
+      // Define column headers
+      worksheet.columns = [
+          { header: 'Email', key: 'email', width: 30 },
+          { header: 'Phone Number', key: 'phonenumber', width: 30 },
+          { header: 'Meter Number', key: 'meternumber', width: 30 },
+          { header: 'Password', key: 'password', width: 30 },
+      ];
+
+      // Add data rows
+      users.forEach(user => {
+          worksheet.addRow({
+              email: user.email,
+              phonenumber: user.phonenumber,
+              meternumber: user.meternumber,
+              password: user.password,
+          });
+      });
+
+      // Set response headers for file download
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', 'attachment; filename=' + 'users.xlsx');
+
+      // Write workbook to response
+      await workbook.xlsx.write(res);
+      res.end();
+
+  } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
   }
 });
 
