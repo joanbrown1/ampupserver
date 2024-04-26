@@ -282,6 +282,31 @@ app.get('/admins', async (req, res) => {
   }
 });
 
+// API endpoint to search for admins by email
+app.post("/admins/email", async (req, res) => {
+  try {
+    const searchemail = req.body.email;
+    if (!searchemail) {
+      return res.status(400).json({ message: "email parameter is missing" });
+    }
+
+    // Use a regular expression to perform a case-insensitive search for similar categories
+    const regex = new RegExp(searchemail, "i");
+
+    // Search for users directly in the database
+    const admins = await Admin.find({ email: regex }).exec();
+
+    if (admins.length === 0) {
+      return res.status(404).json({ message: "No admins found for the provided email" });
+    }
+
+    res.status(200).json(admins);
+  } catch (error) {
+    console.error("Error searching for users:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 app.use("/update/admin", updateAdminRoutes);
 
 //app.listen();
