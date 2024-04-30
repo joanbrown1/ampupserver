@@ -31,5 +31,4 @@ const User = mongoose.model("user", userSchema);
 //     return schema.validate(data)
 // }
 
-module.exports = {User};
-// module.exports = {User, validate};
+module.exports = {User, validate};
