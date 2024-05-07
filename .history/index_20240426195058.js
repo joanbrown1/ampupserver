@@ -175,35 +175,7 @@ app.post("/transactions/email", async (req, res) => {
       console.error("Error searching for transactions:", error);
       res.status(500).json({ message: "Internal server error" });
     }
-});
-
-// API endpoint to search for transactions by ppid
-app.post("/transactions/ppid", async (req, res) => {
-    try {
-      const searchppid = req.body.ppid;
-      if (!searchppid) {
-        return res.status(400).json({ message: "ppid parameter is missing" });
-      }
-  
-      // Use a regular expression to perform a case-insensitive search for similar categories
-      const regex = new RegExp(searchppid, "i");
-  
-      // Search for transactions directly in the database
-      const transactions = await Transaction.find({ ppid: regex }).exec();
-  
-      if (transactions.length === 0) {
-        return res.status(404).json({ message: "No transactions found for the provided ppid" });
-      }
-
-       // Sort transactions by timestamp in ascending order (earliest first)
-       transactions.reverse();
-  
-      res.status(200).json(transactions);
-    } catch (error) {
-      console.error("Error searching for transactions:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-});
+  });
 
   // API endpoint for charges
 app.post('/charge', async (req, res) => {
