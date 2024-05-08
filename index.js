@@ -13,6 +13,7 @@ const updateUserRoutes = require("./routes/updateUser");
 const updateAdminRoutes = require("./routes/updateAdmin");
 const { User } = require("./models/user");
 const exceljs = require('exceljs');
+const puppeteer = require('puppeteer');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -204,6 +205,85 @@ app.post("/transactions/ppid", async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
     }
 });
+
+app.get("/transactions/:ppid", async (req,res) =>{
+
+  const { ppid } = req.params;  
+
+  try {
+
+    // Find transaction by PPID in the database
+    const transaction = await Transaction.findOne({ ppid });
+
+    if (!transaction) {
+        return res.status(404).send('Transaction not found');
+    }
+
+    const htmlContent = `
+        <!-- HTML content remains the same -->
+
+        <div style='text-align: center; color: #808080;'>
+        <img src="https://coaching.bloomx.live/assets/ppp.png"/>
+        <p style="font-size: 1.25rem; font-weight: bold; margin-top: 2.5rem; color: black;">Transaction Details</p>
+        <div style='text-align: center; color: #808080; margin:6px 100px; display: flex; justify-content: space-between;'>
+            <p>Email:</p>
+            <p style='margin-left: auto; color: black;'>${transaction.email}</p>
+        </div>
+        <div style='text-align: center; color: #808080; margin:6px 100px; display: flex; justify-content: space-between;'>
+            <p>Meter Number:</p>
+            <p style='margin-left: auto; color: black;'>${transaction.meternumber}</p>
+        </div>
+        <div style='text-align: center; color: #808080; margin:6px 100px; display: flex; justify-content: space-between;'>
+            <p>Reference Number:</p>
+            <p style='margin-left: auto; color: black;'>${transaction.ppid}</p>
+        </div>
+        <div style='text-align: center; color: #808080; margin:6px 100px; display: flex; justify-content: space-between;'>
+            <p>Paid At:</p>
+            <p style='margin-left: auto; color: black;'>${transaction.date}</p>
+        </div>
+        <div style='text-align: center; color: #808080; margin:6px 100px; display: flex; justify-content: space-between;'>
+            <p>Location:</p>
+            <p style='margin-left: auto; color: black;'>${transaction.location}</p>
+        </div>
+        <div style='text-align: center; color: #808080; margin:6px 100px; display: flex; justify-content: space-between;'>
+            <p>Token:</p>
+            <p style='margin-left: auto; color: black;'>${transaction.token}</p>
+        </div>
+        <hr />
+        <div style='text-align: center; color: #808080; margin:6px 100px; display: flex; justify-content: space-between;'>
+            <p>Service Charge:</p>
+            <p style='margin-left: auto; color: black;'>₦${transaction.charge}</p>
+        </div>
+        <div style='text-align: center; color: #808080; margin:6px 100px; display: flex; justify-content: space-between;'>
+            <p>Discount Amount:</p>
+            <p style='margin-left: auto; color: black;'>₦${transaction.discountamount}</p>
+        </div>
+        <div style='text-align: center; color: #808080; margin:6px 100px; display: flex; justify-content: space-between;'>
+            <p>Discount Percentage:</p>
+            <p style='margin-left: auto; color: black;'>${transaction.discountpercent}%</p>
+        </div>
+        <div>
+            <p style='text-align: center; font-size: 1.25rem; font-weight: bold; margin-top: 0.5rem;'>Total Amount Paid:</p>
+            <p style='color: #7B0323; text-align: center; font-size: 1.25rem; padding-bottom: 2.5rem; font-weight: bold; font-style: italic;'>₦${transaction.amount}</p>
+        </div>
+    </div>
+
+    `;
+
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setContent(htmlContent);
+    const pdfBuffer = await page.pdf();
+    await browser.close();
+    
+    res.contentType("application/pdf");
+    res.send(pdfBuffer);
+} catch (error) {
+    console.error('Error generating PDF:', error);
+    res.status(500).send('Error generating PDF');
+}
+
+})
 
   // API endpoint for charges
 app.post('/charge', async (req, res) => {
