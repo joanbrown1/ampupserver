@@ -286,7 +286,48 @@ app.get("/transactions/:ppid", async (req,res) =>{
 
 });
 
+// API endpoint to search for transactions by date
+app.post("/transactions/month", async (req, res) => {
+  try {
+    const dateParam = req.body.date;
+    if (!dateParam) {
+      return res.status(400).json({ message: "date parameter is missing" });
+    }
 
+    // Parse the date parameter into a Date object
+    const searchDate = new Date(dateParam);
+
+    // Extract month and year from the search date
+    const searchMonth = searchDate.getUTCMonth() + 1; // Adding 1 to get month from 1 to 12
+    const searchYear = searchDate.getUTCFullYear();
+
+    // Search for transactions in the database matching the month and year
+    const transactions = await Transaction.find({
+      $expr: {
+        $eq: [
+          { $month: "$date" },
+          searchMonth
+        ],
+        $eq: [
+          { $year: "$date" },
+          searchYear
+        ]
+      }
+    }).exec();
+
+    if (transactions.length === 0) {
+      return res.status(404).json({ message: "No transactions found for the provided date" });
+    }
+
+    // Sort transactions by timestamp in ascending order (earliest first)
+    transactions.reverse();
+
+    res.status(200).json(transactions);
+  } catch (error) {
+    console.error("Error searching for transactions:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 //API transaction by date
 app.post("/transactions/date", async (req, res) => {

@@ -206,7 +206,6 @@ app.post("/transactions/ppid", async (req, res) => {
     }
 });
 
-// API endpoint to search for transactions receipt by ppid
 app.get("/transactions/:ppid", async (req,res) =>{
 
   const { ppid } = req.params;  
@@ -284,60 +283,7 @@ app.get("/transactions/:ppid", async (req,res) =>{
     res.status(500).send('Error generating PDF');
 }
 
-});
-
-
-
-//API transaction by date
-app.post("/transactions/date", async (req, res) => {
-  try {
-    const dateParam = req.body.date;
-    if (!dateParam) {
-      return res.status(400).json({ message: "date parameter is missing" });
-    }
-
-    let startDate, endDate;
-
-    // Parse the date parameter into a Date object
-    const searchDate = new Date(dateParam);
-
-    // Extract the year, month, and date from the search date
-    const searchYear = searchDate.getUTCFullYear();
-    const searchMonth = searchDate.getUTCMonth();
-    const searchDay = searchDate.getUTCDate();
-
-    // Calculate the start and end dates for the search (if searching by month or year)
-    if (searchMonth !== undefined && searchYear !== undefined) {
-      startDate = new Date(Date.UTC(searchYear, searchMonth, 1, 0, 0, 0));
-      endDate = new Date(Date.UTC(searchYear, searchMonth + 1, 0, 23, 59, 59));
-    } else if (searchYear !== undefined) {
-      startDate = new Date(Date.UTC(searchYear, 0, 1, 0, 0, 0));
-      endDate = new Date(Date.UTC(searchYear, 11, 31, 23, 59, 59));
-    } else {
-      startDate = new Date(Date.UTC(searchYear, searchMonth, searchDay, 0, 0, 0));
-      endDate = new Date(Date.UTC(searchYear, searchMonth, searchDay, 23, 59, 59));
-    }
-
-    // Search for transactions in the database within the specified date range
-    const transactions = await Transaction.find({
-      date: { $gte: startDate, $lte: endDate }
-    }).exec();
-
-    if (transactions.length === 0) {
-      return res.status(404).json({ message: "No transactions found for the provided date" });
-    }
-
-    // Sort transactions by timestamp in ascending order (earliest first)
-    transactions.reverse();
-
-    res.status(200).json(transactions);
-  } catch (error) {
-    console.error("Error searching for transactions:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
-
-
+})
 
   // API endpoint for charges
 app.post('/charge', async (req, res) => {

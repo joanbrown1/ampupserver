@@ -286,41 +286,33 @@ app.get("/transactions/:ppid", async (req,res) =>{
 
 });
 
-
-
-//API transaction by date
-app.post("/transactions/date", async (req, res) => {
+// API endpoint to search for transactions by date
+app.post("/transactions/month", async (req, res) => {
   try {
     const dateParam = req.body.date;
     if (!dateParam) {
       return res.status(400).json({ message: "date parameter is missing" });
     }
 
-    let startDate, endDate;
-
     // Parse the date parameter into a Date object
     const searchDate = new Date(dateParam);
 
-    // Extract the year, month, and date from the search date
+    // Extract month and year from the search date
+    const searchMonth = searchDate.getUTCMonth() + 1; // Adding 1 to get month from 1 to 12
     const searchYear = searchDate.getUTCFullYear();
-    const searchMonth = searchDate.getUTCMonth();
-    const searchDay = searchDate.getUTCDate();
 
-    // Calculate the start and end dates for the search (if searching by month or year)
-    if (searchMonth !== undefined && searchYear !== undefined) {
-      startDate = new Date(Date.UTC(searchYear, searchMonth, 1, 0, 0, 0));
-      endDate = new Date(Date.UTC(searchYear, searchMonth + 1, 0, 23, 59, 59));
-    } else if (searchYear !== undefined) {
-      startDate = new Date(Date.UTC(searchYear, 0, 1, 0, 0, 0));
-      endDate = new Date(Date.UTC(searchYear, 11, 31, 23, 59, 59));
-    } else {
-      startDate = new Date(Date.UTC(searchYear, searchMonth, searchDay, 0, 0, 0));
-      endDate = new Date(Date.UTC(searchYear, searchMonth, searchDay, 23, 59, 59));
-    }
-
-    // Search for transactions in the database within the specified date range
+    // Search for transactions in the database matching the month and year
     const transactions = await Transaction.find({
-      date: { $gte: startDate, $lte: endDate }
+      $expr: {
+        $eq: [
+          { $month: "$date" },
+          searchMonth
+        ],
+        $eq: [
+          { $year: "$date" },
+          searchYear
+        ]
+      }
     }).exec();
 
     if (transactions.length === 0) {
