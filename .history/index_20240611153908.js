@@ -536,7 +536,7 @@ app.post('/message', async (req, res) => {
       
       io.emit('newMessage', newMessage);
 
-      res.status(200).json(newMessage);
+      res.status(200).json({message: "Message created"});
   } catch (error) {
       console.error(error.message);
       res.status(500).json({ message: error.message });
