@@ -567,7 +567,7 @@ app.post("/messages/convoid", async (req, res) => {
     // Use a regular expression to perform a case-insensitive search for similar categories
     const regex = new RegExp(convoid, "i");
 
-    const messages = await Messsage.find({ convoid: regex }).exec();
+    const messages = await Messsage.find({ convo_id: regex }).exec();
 
     if (messages.length === 0) {
       return res.status(404).json({ message: "No messages found for the provided email" });
