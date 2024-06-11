@@ -527,6 +527,29 @@ app.get('/conversations', async (req, res) => {
   }
 });
 
+app.post("/conversation/sender", async (req, res) => {
+  try {
+    const senderemail = req.body.sender_email;
+    if (!senderemail) {
+      return res.status(400).json({ message: "sender email parameter is missing" });
+    }
+
+    // Use a regular expression to perform a case-insensitive search for similar categories
+    const regex = new RegExp(senderemail, "i");
+
+    const conversations = await Conversation.find({ sender_email: regex }).exec();
+
+    if (conversations.length === 0) {
+      return res.status(404).json({ message: "No conversations found for the provided email" });
+    }
+
+    res.status(200).json(conversations);
+  } catch (error) {
+    console.error("Error searching for conversations:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 app.post('/message', async (req, res) => {
   try {
       await Messsage.create(req.body);
@@ -570,7 +593,7 @@ app.post("/messages/convoid", async (req, res) => {
     const messages = await Messsage.find({ convo_id: regex }).exec();
 
     if (messages.length === 0) {
-      return res.status(404).json({ message: "No messages found for the provided email" });
+      return res.status(404).json({ message: "No messages found for the provided convo id" });
     }
 
     res.status(200).json(messages);
