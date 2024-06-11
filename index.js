@@ -2,6 +2,8 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const http = require('http');
+const socketIo = require('socket.io');
 const connection = require("./db");
 const { Transaction } = require("./models/Transaction");
 const { Charge } = require("./models/Charge");
@@ -16,12 +18,17 @@ const { User } = require("./models/user");
 const exceljs = require('exceljs');
 const puppeteer = require('puppeteer');
 const nodemailer = require('nodemailer');
+const { Conversation } = require("./models/Conversation");
+const { Messsage } = require("./models/Message");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // database connection
 connection();
+
+const server = http.createServer(app);
+const io = socketIo(server);
 
 // middlewares
 app.use(express.json());
@@ -486,7 +493,102 @@ app.post("/admins/email", async (req, res) => {
 
 app.use("/update/admin", updateAdminRoutes);
 
+
+//API for messages and conversation
+
+app.post('/conversation', async (req, res) => {
+  try {
+      await Conversation.create(req.body);
+
+
+      const { convo_id, sender_email, receiver_email } = req.body;
+      const newConvo = { convo_id, sender_email, receiver_email };
+
+      io.emit('newConversation', newConvo);
+
+      res.status(200).json({message: "Conversation created"});
+  } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+  }
+});
+
+app.get('/conversations', async (req, res) => {
+  try {
+      const conversations = await Conversation.find({});
+
+      // Sort conversations by timestamp in ascending order (earliest first)
+      conversations.reverse();
+
+      res.status(200).json(conversations);
+  } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/message', async (req, res) => {
+  try {
+      await Messsage.create(req.body);
+
+      const { convo_id, message, sender_email } = req.body;
+      const newMessage = { convo_id, message, sender_email };
+      
+      io.emit('newMessage', newMessage);
+
+      res.status(200).json({message: "Message created"});
+  } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+  }
+});
+
+app.get('/messages', async (req, res) => {
+  try {
+      const messages = await Messsage.find({});
+
+      // Sort messages by timestamp in ascending order (earliest first)
+      messages.reverse();
+
+      res.status(200).json(messages);
+  } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+  }
+});
+
+app.post("/messages/convoid", async (req, res) => {
+  try {
+    const convoid = req.body.convo_id;
+    if (!convoid) {
+      return res.status(400).json({ message: "convo Id parameter is missing" });
+    }
+
+    // Use a regular expression to perform a case-insensitive search for similar categories
+    const regex = new RegExp(convoid, "i");
+
+    const messages = await Messsage.find({ convoid: regex }).exec();
+
+    if (messages.length === 0) {
+      return res.status(404).json({ message: "No messages found for the provided email" });
+    }
+
+    res.status(200).json(messages);
+  } catch (error) {
+    console.error("Error searching for messages:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 //app.listen();
+
+io.on('connection', (socket) => {
+  console.log('New client connected');
+
+  socket.on('disconnect', () => {
+      console.log('Client disconnected');
+  });
+});
 
 const PORT = process.env.PORT || 3030;
 app.listen(PORT, () => {
