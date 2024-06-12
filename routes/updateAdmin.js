@@ -10,9 +10,14 @@ router.put("/", async (req, res) => {
 
         // Update admin data
         if (req.body.privilage) admin.privilage = req.body.privilage;
+        if (req.body.password) {
+            const salt = await bcrypt.genSalt(10);
+            const hashPassword = await bcrypt.hash(req.body.password, salt);
+            admin.password = hashPassword;
+        }
         await admin.save();
 
-        res.status(200).send({ message: "Admin privilages updated successfully" });
+        res.status(200).send({ message: "Admin updated successfully" });
     } catch (error) {
         console.error(error);
         res.status(500).send({ message: "Internal Server Error" });
