@@ -153,11 +153,21 @@ app.post('/transaction', async (req, res) => {
         const email = await req.body.email;
         const token = await req.body.token;
 
-        await transporter.sendMail({
+        const mailOptions = {
           from: 'no-reply@powerplus.ngg',
           to: email, 
           subject: 'Confirmation: Your Light Token Purchase',
-          text: `Token: ${token}. www.powerplus.ng` // You can customize this message
+          html: `<p>Token: ${token}. <br/> Recharge your meter here: <a href="www.powerplus.ng">www.powerplus.ng</a></p>`
+       };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+              console.error(error);
+              res.status(500).json({ message: 'Email sending failed' });
+            } else {
+              console.log('Email sent: ' + info.response);
+              res.status(200).json({ message: 'Email sent' });
+            }
         });
 
         res.status(200).json({message: "Transaction created"});
