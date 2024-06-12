@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const { Admin } = require("../models/Admin");
+const bcrypt = require("bcrypt");
 
 // PUT endpoint to update admin privilages
 router.put("/", async (req, res) => {
