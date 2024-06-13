@@ -4,14 +4,15 @@ const {Admin} = require("../models/Admin");
 const bcrypt = require("bcrypt");
 const nodemailer = require('nodemailer');
 
-// const transporter = nodemailer.createTransport({
-//     host: 'premium103.web-hosting.com',
-//     port: 465, 
-//     auth: {
-//       admin: 'hr@elitesmatch.org',
-//       pass: 'LoveWorld123.'
-//     }
-//   });
+const transporter = nodemailer.createTransport({
+    host: 'mail.powerplus.ng',
+    port: 587,
+    secure: false, // STARTTLS
+    auth: {
+      user: 'no-reply@powerplus.ng',
+      pass: 'aabb1123'
+    }
+  });
 
 router.post("/", async(req, res) => {
     try {
@@ -33,7 +34,7 @@ router.post("/", async(req, res) => {
         const privilage = req.body.privilage
 
         const mailOptions = {
-            from: 'no-reply@powerplus.ngg',
+            from: 'no-reply@powerplus.ng',
             to: email, 
             subject: `You have been given ${privilage} rights`,
             html: `<p>You have been given ${privilage} rights. Password: admin12345 <br/> To change you password login and here <a href="www.powerplus.ng/admin">www.powerplus.ng/admin</a></p>`
