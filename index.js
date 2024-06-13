@@ -637,6 +637,34 @@ app.post("/support", async(req, res) => {
   });
 });
 
+app.post("/password", async(req, res) => {
+
+  const email = req.body.email;
+
+  const mailOptions = {
+    from: 'no-reply@powerplus.ng',
+    to: email, 
+    subject: "Password Reset Request",
+    html: `<p>Dear User, 
+    <br/>We received a request to reset your password for your Power Plus account. You can reset your password by clicking the link below: 
+    <br/><a href="https://powerplus.ng/changepassword">https://powerplus.ng/changepassword</a>
+    <br/>If you did not request a password reset, please ignore this email. This link will expire in 24 hours for security reasons.
+    <br/>If you have any questions or need further assistance, feel free to contact our support team at support@powerplus.ng.
+    <br/><br/>Thank you, 
+    <br/>Power Plus Team</p>`
+ };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Email sending failed' });
+      } else {
+        console.log('Email sent: ' + info.response);
+        res.status(200).json({ message: 'Email sent' });
+      }
+  });
+});
+
 //app.listen();
 
 io.on('connection', (socket) => {
