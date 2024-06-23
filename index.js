@@ -561,6 +561,30 @@ app.post("/conversation/sender", async (req, res) => {
   }
 });
 
+app.delete('/conversation/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Delete the conversation from the database
+    const result = await Conversation.destroy({
+      where: { convo_id: id }
+    });
+
+    if (result) {
+      // If the conversation was deleted, emit an event
+      io.emit('deleteConversation', { id });
+
+      res.status(200).json({ message: 'Conversation deleted successfully' });
+    } else {
+      // If no conversation was found to delete
+      res.status(404).json({ message: 'Conversation not found' });
+    }
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 app.post('/message', async (req, res) => {
   try {
       await Messsage.create(req.body);
@@ -622,7 +646,7 @@ app.post("/support", async(req, res) => {
 
   const mailOptions = {
     from: email,
-    to: 'support@powerplus.ng', 
+    to: 'support@powerkiosk.ng', 
     subject: subject,
     text: message
  };
