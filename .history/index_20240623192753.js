@@ -37,11 +37,11 @@ app.use(cors()); // Enable CORS for all origins
 
 // Configure nodemailer with your email settings
 const transporter = nodemailer.createTransport({
-  host: 'mail.powerkiosk.ng',
+  host: 'mail.powerplus.ng',
   port: 587,
   secure: false, // STARTTLS
   auth: {
-    user: 'no-reply@powerkiosk.ng',
+    user: 'no-reply@powerplus.ng',
     pass: 'aabb1123'
   }
 });
@@ -155,10 +155,10 @@ app.post('/transaction', async (req, res) => {
         const token = await req.body.token;
 
         const mailOptions = {
-          from: 'no-reply@powerkiosk.ng',
+          from: 'no-reply@powerplus.ng',
           to: email, 
           subject: 'Confirmation: Your Light Token Purchase',
-          html: `<p>Token: ${token}. <br/> Recharge your meter here: <a href="www.powerkiosk.ng">www.powerkiosk.ng</a></p>`
+          html: `<p>Token: ${token}. <br/> Recharge your meter here: <a href="www.powerplus.ng">www.powerplus.ng</a></p>`
        };
 
         transporter.sendMail(mailOptions, (error, info) => {
@@ -667,14 +667,14 @@ app.post("/password", async(req, res) => {
   const email = req.body.email;
 
   const mailOptions = {
-    from: 'no-reply@powerkiosk.ng',
+    from: 'no-reply@powerplus.ng',
     to: email, 
     subject: "Password Reset Request",
     html: `<p>Dear User, 
     <br/>We received a request to reset your password for your Power Plus account. You can reset your password by clicking the link below: 
-    <br/><a href="https://powerkiosk.ng/changepassword">https://powerkiosk.ng/changepassword</a>
+    <br/><a href="https://powerplus.ng/changepassword">https://powerplus.ng/changepassword</a>
     <br/>If you did not request a password reset, please ignore this email. This link will expire in 24 hours for security reasons.
-    <br/>If you have any questions or need further assistance, feel free to contact our support team at support@powerkiosk.ng.
+    <br/>If you have any questions or need further assistance, feel free to contact our support team at support@powerplus.ng.
     <br/><br/>Thank you, 
     <br/>Power Plus Team</p>`
  };
