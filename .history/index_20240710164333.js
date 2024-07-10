@@ -41,8 +41,8 @@ const transporter = nodemailer.createTransport({
   host: 'mail.powerkiosk.ng',
   port: 465,
   auth: {
-    user: 'support@powerkiosk.ng',
-    pass: 'WCckgFiiWy1faVx'
+    user: 'no-reply@powerkiosk.ng',
+    pass: 'W4YErQCIHj2jOoL'
   }
 
   // host: 'premium103.web-hosting.com',
