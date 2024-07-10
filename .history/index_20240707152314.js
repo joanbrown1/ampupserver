@@ -21,7 +21,6 @@ const nodemailer = require('nodemailer');
 const { Conversation } = require("./models/Conversation");
 const { Messsage } = require("./models/Message");
 const { Faq } = require("./models/Faq");
-const { Meter } = require("./models/Meter");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -406,32 +405,6 @@ app.get('/charges', async (req, res) => {
         charges.reverse();
 
         res.status(200).json(charges);
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).json({ message: error.message });
-    }
-});
-
-
-  // API endpoint for meter numbers
-  app.post('/meter', async (req, res) => {
-    try {
-        await Meter.create(req.body);
-        res.status(200).json({message: "Meter Number added"});
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).json({ message: error.message });
-    }
-});
-
-app.get('/meters', async (req, res) => {
-    try {
-        const meters = await Meter.find({});
-
-        // Sort meters by timestamp in ascending order (earliest first)
-        meters.reverse();
-
-        res.status(200).json(meters);
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ message: error.message });

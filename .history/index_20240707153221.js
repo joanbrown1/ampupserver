@@ -428,7 +428,7 @@ app.get('/meters', async (req, res) => {
     try {
         const meters = await Meter.find({});
 
-        // Sort meters by timestamp in ascending order (earliest first)
+        // Sort charges by timestamp in ascending order (earliest first)
         meters.reverse();
 
         res.status(200).json(meters);
