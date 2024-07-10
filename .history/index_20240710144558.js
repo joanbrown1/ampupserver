@@ -38,19 +38,19 @@ app.use(cors()); // Enable CORS for all origins
 
 // Configure nodemailer with your email settings
 const transporter = nodemailer.createTransport({
-  host: 'mail.powerkiosk.ng',
-  port: 587,
-  auth: {
-    user: 'no-reply@powerkiosk.ng',
-    pass: 'W4YErQCIHj2jOoL'
-  }
+  // host: 'mail.powerkiosk.ng',
+  // port: 587,
+  // auth: {
+  //   user: 'no-reply@powerkiosk.ng',
+  //   pass: 'aabb1123'
+  // }
 
-  // host: 'premium103.web-hosting.com',
-  //   port: 465, // Use the appropriate SMTP port
-  //   auth: {
-  //     user: 'hr@elitesmatch.org',
-  //     pass: 'LoveWorld123.'
-  //   }
+  host: 'premium103.web-hosting.com',
+    port: 465, // Use the appropriate SMTP port
+    auth: {
+      user: 'hr@elitesmatch.org',
+      pass: 'LoveWorld123.'
+    }
 });
 
 // routes
