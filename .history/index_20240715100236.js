@@ -166,7 +166,7 @@ app.post('/transaction', async (req, res) => {
         const token = await req.body.token;
 
         const mailOptions = {
-          from: 'support@powerkiosk.ng',
+          from: 'support@powerkiosk.n',
           to: email, 
           subject: 'Power Kiosk: Your Light Token Purchase',
           html: `<p>Token: ${token}. <br/> Recharge your meter here: <a href="www.powerkiosk.ng">www.powerkiosk.ng</a></p>`
