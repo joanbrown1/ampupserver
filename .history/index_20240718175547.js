@@ -14,7 +14,6 @@ const adminRoutes = require("./routes/Admins");
 const authUserRoutes = require("./routes/authUser");
 const updateUserRoutes = require("./routes/updateUser");
 const updateAdminRoutes = require("./routes/updateAdmin");
-const supportRoutes = require("./routes/Support");
 const { User } = require("./models/user");
 const exceljs = require('exceljs');
 const puppeteer = require('puppeteer');
@@ -50,8 +49,15 @@ const transporter = nodemailer.createTransport({
   logger: true // Enable logging
 });
 
+//   host: 'premium103.web-hosting.com',
+//     port: 465, // Use the appropriate SMTP port
+//     auth: {
+//       user: 'hr@elitesmatch.org',
+//       pass: 'LoveWorld123.'
+//     }
+// });
+
 // routes
-app.use("/support", supportRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/authUser", authUserRoutes);
 app.use("/update/user", updateUserRoutes);
@@ -63,7 +69,6 @@ app.get('/users', async(req, res) => {
         res.status(500).json({message: error.message})
     }
 });
-
 
 // API endpoint to search for users by email
 app.post("/users/email", async (req, res) => {
@@ -695,7 +700,29 @@ app.post("/messages/convoid", async (req, res) => {
   }
 });
 
+app.post("/support", async(req, res) => {
 
+  const email = req.body.email;
+  const subject = req.body.subject;
+  const message = req.body.message;
+
+  const mailOptions = {
+    from: email,
+    to: 'support@powerkiosk.ng', 
+    subject: subject,
+    text: message
+ };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Email sending failed' });
+      } else {
+        console.log('Email sent: ' + info.response);
+        res.status(200).json({ message: 'Email sent' });
+      }
+  });
+});
 
 app.post("/password", async(req, res) => {
 

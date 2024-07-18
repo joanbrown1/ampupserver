@@ -14,7 +14,6 @@ const adminRoutes = require("./routes/Admins");
 const authUserRoutes = require("./routes/authUser");
 const updateUserRoutes = require("./routes/updateUser");
 const updateAdminRoutes = require("./routes/updateAdmin");
-const supportRoutes = require("./routes/Support");
 const { User } = require("./models/user");
 const exceljs = require('exceljs');
 const puppeteer = require('puppeteer');
@@ -51,7 +50,6 @@ const transporter = nodemailer.createTransport({
 });
 
 // routes
-app.use("/support", supportRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/authUser", authUserRoutes);
 app.use("/update/user", updateUserRoutes);
@@ -63,7 +61,6 @@ app.get('/users', async(req, res) => {
         res.status(500).json({message: error.message})
     }
 });
-
 
 // API endpoint to search for users by email
 app.post("/users/email", async (req, res) => {
