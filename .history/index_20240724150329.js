@@ -711,29 +711,6 @@ app.post("/messages/convoid", async (req, res) => {
   }
 });
 
-// DELETE route to delete all messages with a particular convo_id
-app.delete('/messages/:convoid', async (req, res) => {
-  try {
-    const { convoid } = req.params;
-
-    // Delete all messages with the given convo_id
-    const result = await Messsage.deleteMany({ convo_id: convoid });
-
-    if (result.deletedCount > 0) {
-      // If messages were deleted, emit an event
-      io.emit('deleteMessages', { convoid });
-
-      res.status(200).json({ message: 'Messages deleted successfully' });
-    } else {
-      // If no messages were found to delete
-      res.status(404).json({ message: 'No messages found for the provided convo_id' });
-    }
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: error.message });
-  }
-});
-
 
 
 app.post("/password", async(req, res) => {

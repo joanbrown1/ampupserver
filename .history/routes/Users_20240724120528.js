@@ -51,6 +51,7 @@ router.post("/", async(req, res) => {
             
             <br/><br/><p>Best regards,</p>
             <br/><p>The Powerkiosk.ng Team</p>
+            ---
             
             <br/><br/><p>If you have any questions, feel free to contact our support team at support@powerkiosk.ng or call us at 0707 330 5599.</p>`
         };
