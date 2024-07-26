@@ -34,10 +34,9 @@ connection();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "*",  // This allows all origins
     methods: ["GET", "POST"]
-  },
-  transports: ['websocket']
+  }
 });
 
 // middlewares
