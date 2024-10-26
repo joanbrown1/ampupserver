@@ -14,24 +14,23 @@ class DiscoController extends Controller
  
      // Update the active status of an Disco
      public function update(Request $request)
-    {
-        // Retrieve the 'id' from the request body
-        $id = $request->input('id');
-
-        // Find the Disco by ID
-        $Disco = Disco::find($id);
-
-        if ($Disco) {
-            // Update the Disco fields dynamically based on the request input
-            $Disco->fill($request->except('id'));
-            $Disco->save();
-
-            return response()->json(['message' => 'Disco updated successfully.'], 200);
-        }
-
-        return response()->json(['message' => 'Disco not found.'], 404);
-    }
-
+     {
+         // Retrieve the 'id' from the request body
+         $id = $request->input('id');
+     
+         // Find the Disco by ID
+         $Disco = Disco::find($id);
+     
+         if ($Disco) {
+             // Update the Disco fields dynamically based on the request input
+             $Disco->fill($request->except('id'));
+             $Disco->save();
+     
+             return response()->json(['message' => 'Disco updated successfully.'], 200);
+         }
+     
+         return response()->json(['message' => 'Disco not found.'], 404);
+     }
      
 
      public function DiscosById(Request $request)
